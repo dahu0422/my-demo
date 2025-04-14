@@ -1,7 +1,11 @@
 import HtmlWebpackPlugin from "html-webpack-plugin"
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+
+const isDev = process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
 
 export default {
-  mode: "production",
+  mode: isProduction ? 'production' : 'development',
   // 入口
   // entry: "", 单入口
   // entry: [], // 多入口
@@ -20,12 +24,43 @@ export default {
   module: {
     rules: [
       { test: /\.js$/, use: "babel-loader", exclude: /node_modules/ },
+      {
+        test: /\.css$/, use: [
+          isProduction ? MiniCssExtractPlugin.loader : "style-loader",
+          "css-loader",
+          "postcss-loader"
+        ]
+      },
+      {
+        test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
+        type: "asset",
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024, // 4KB
+          },
+        },
+        generator: {
+          filename: "images/[name].[hash:8][ext]",
+        },
+      },
+      {
+        test: /\.(svg|woff2?|eot|ttf|otf)(\?.*)?$/,
+        type: "asset/resource",
+        generator: {
+          filename: "fonts/[name].[hash:8][ext]",
+        },
+      },
     ],
   },
   // 插件：实现打包优化、资源管理、环境变量注入等
   plugins: [
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+    }),
+    isProduction &&
+    new MiniCssExtractPlugin({
+      filename: "css/[name].[contenthash:8].css",
+      chunkFilename: "css/[id].[contenthash:8].css",
     }),
   ],
   optimization: {
@@ -36,4 +71,11 @@ export default {
       chunks: "all",
     },
   },
+  // 开发服务器
+  devServer: {
+    port: 9000,
+    hot: true, // 热更新
+    open: true, // 自动打开浏览器
+    compress: true, // gzip压缩
+  }
 }
