@@ -55,7 +55,17 @@ export default {
   // 插件：实现打包优化、资源管理、环境变量注入等
   plugins: [
     new HtmlWebpackPlugin({
+      title: "webpack5-demo",
       template: "./public/index.html",
+      filename: "index.html",
+      favicon: "./public/favicon.ico",
+      minify: {
+        collapseWhitespace: isProduction, // 删除空格
+        removeComments: isProduction, // 删除注释
+        removeRedundantAttributes: isProduction, // 删除多余属性
+        removeScriptTypeAttributes: isProduction, // 删除script类型属性
+        removeStyleLinkTypeAttributes: isProduction, // 删除style类型属性
+      },
     }),
     isProduction &&
     new MiniCssExtractPlugin({
