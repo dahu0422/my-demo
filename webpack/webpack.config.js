@@ -1,8 +1,17 @@
+import Webpack from "webpack";
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
 import HtmlWebpackPlugin from "html-webpack-plugin"
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const isDev = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production';
+const isAnalyze = process.env.ANALYZE === 'true';
+
 
 export default {
   mode: isProduction ? 'production' : 'development',
@@ -14,7 +23,8 @@ export default {
   },
   // 出口
   output: {
-    filename: "[name].[contenthash:8].js",
+    path: path.resolve(__dirname, './dist'),
+    filename: "js/[name].[contenthash:8].js",
     clean: true, // 自动清理dist目录 CleanWebpackPlugin
     environment: {
       arrowFunction: false,
@@ -72,10 +82,21 @@ export default {
       filename: "css/[name].[contenthash:8].css",
       chunkFilename: "css/[id].[contenthash:8].css",
     }),
+    new Webpack.DefinePlugin({
+      "process.env.API_URL":
+        process.env.NODE_ENV === 'development'
+          ? JSON.stringify("https://api.dev.com")
+          : JSON.stringify("https://api.prod.com")
+    }),
+    isAnalyze && new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: 'bundle-report.html', // 自定义文件名
+    })
   ],
   optimization: {
     // 压缩，其他方案 terser uglifyjs esbuild
     minimize: true,
+    minimizer: [new TerserPlugin()],
     // 拆分
     splitChunks: {
       chunks: "all",
