@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
       '@babel/core':
         specifier: 7.26.10
@@ -47,6 +51,9 @@ importers:
       style-loader:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.99.5)
+      terser-webpack-plugin:
+        specifier: ^5.3.14
+        version: 5.3.14(webpack@5.99.5)
       webpack:
         specifier: 5.99.5
         version: 5.99.5(webpack-cli@6.0.1)
@@ -69,6 +76,10 @@ importers:
   demos/04.css-loader: {}
 
   demos/05.file-loader: {}
+
+  demos/06.optimization-split-chunks: {}
+
+  demos/07.optimization-terser-plugin: {}
 
 packages:
 
