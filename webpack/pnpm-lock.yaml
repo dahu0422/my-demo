@@ -81,6 +81,8 @@ importers:
 
   demos/07.optimization-terser-plugin: {}
 
+  demos/08.webpack-dev-server: {}
+
 packages:
 
   '@ampproject/remapping@2.3.0':
