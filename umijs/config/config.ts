@@ -1,32 +1,21 @@
 import { defineConfig } from '@umijs/max';
+import routes from './routes';
 
 export default defineConfig({
+  locale: {
+    // 默认使用 src/locales/zh-CN.ts 作为多语言文件
+    default: 'zh-CN',
+    antd: true,
+    baseNavigator: true, // 添加这行，启用浏览器语言自动检测
+  },
+  layout: {
+    locale: true,
+  },
   antd: {},
   access: {},
   model: {},
   initialState: {},
   request: {},
-  layout: {},
-  routes: [
-    {
-      path: '/',
-      redirect: '/home',
-    },
-    {
-      name: '首页',
-      path: '/home',
-      component: './Home',
-    },
-    {
-      name: '权限演示',
-      path: '/access',
-      component: './Access',
-    },
-    {
-      name: ' CRUD 示例',
-      path: '/table',
-      component: './Table',
-    },
-  ],
+  routes,
   npmClient: 'pnpm',
 });
