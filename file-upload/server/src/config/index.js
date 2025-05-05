@@ -11,7 +11,8 @@ module.exports = {
       'image/jpeg',
       'image/png',
       'image/gif',
-      'video/mp4'
+      'video/mp4',
+      'video/quicktime'
     ]
   }
 }; 

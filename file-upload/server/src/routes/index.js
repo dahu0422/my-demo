@@ -12,4 +12,7 @@ router.post('/upload', uploadController.upload);
 // 合并切片
 router.post('/merge', uploadController.merge);
 
+// 检查已上传分片（断点续传）
+router.get('/uploaded-chunks', uploadController.uploadedChunks);
+
 module.exports = router; 

@@ -10,7 +10,15 @@ import SparkMD5 from "spark-md5"
 import "./App.css"
 
 // 定义切片大小（1MB）
-const CHUNK_SIZE = 1 * 1024 * 1024
+const CHUNK_SIZE = 5 * 1024 * 1024
+const ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "video/mp4",
+  "video/quicktime",
+]
+const MAX_CONCURRENT = 3
 
 const App = () => {
   const [uploadProgress, setUploadProgress] = useState({})
@@ -37,6 +45,18 @@ const App = () => {
     })
   }
 
+  // 获取已上传分片索引
+  const getUploadedChunks = async (fileHash, filename) => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:3000/uploaded-chunks?fileHash=${fileHash}&filename=${filename}`
+      )
+      return data.uploaded || []
+    } catch {
+      return []
+    }
+  }
+
   // 文件切片
   const createFileChunks = (file) => {
     const chunks = []
@@ -51,28 +71,82 @@ const App = () => {
     return chunks
   }
 
-  // 上传切片
-  const uploadChunks = async (chunks, fileHash, filename) => {
-    const requests = chunks.map((chunk) => {
-      const formData = new FormData()
-      formData.append("file", chunk.file)
-      formData.append("fileHash", fileHash)
-      formData.append("index", chunk.index)
-      formData.append("filename", filename)
-      return axios.post("http://localhost:3000/upload", formData, {
-        onUploadProgress: (progressEvent) => {
-          const percent = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          )
-          setUploadProgress((prev) => ({
-            ...prev,
-            [filename]: percent,
-          }))
-        },
-      })
-    })
+  // 并发上传分片，带进度条更新
+  const uploadChunks = async (
+    chunks,
+    fileHash,
+    filename,
+    uploadedIndexes,
+    fileSize
+  ) => {
+    // 已上传的分片大小（用于断点续传场景）
+    let uploadedSize = uploadedIndexes.length * CHUNK_SIZE
+    let lastPercent = 0 // 上一次进度百分比
+    // 过滤出未上传的分片队列
+    const queue = chunks.filter(
+      (chunk) => !uploadedIndexes.includes(chunk.index)
+    )
+    let inProgress = 0 // 当前正在上传的分片数
+    let current = 0 // 当前处理到的分片索引
 
-    await Promise.all(requests)
+    return new Promise((resolve, reject) => {
+      let finished = 0 // 已完成上传的分片数
+      const total = queue.length // 需要上传的分片总数
+
+      // 控制并发上传的主循环
+      function next() {
+        // 所有分片上传完成，resolve
+        if (finished === total) {
+          resolve()
+          return
+        }
+        // 控制最大并发数，批量发起上传
+        while (inProgress < MAX_CONCURRENT && current < total) {
+          const chunk = queue[current++] // 取下一个分片
+          inProgress++ // 正在上传数+1
+          axios
+            .post(
+              "http://localhost:3000/upload",
+              (() => {
+                // 构造分片上传的表单数据
+                const formData = new FormData()
+                formData.append("file", chunk.file)
+                formData.append("fileHash", fileHash)
+                formData.append("index", chunk.index)
+                formData.append("filename", filename)
+                return formData
+              })(),
+              {
+                // 上传进度回调，实时更新进度条
+                onUploadProgress: (progressEvent) => {
+                  const chunkUploaded = progressEvent.loaded // 当前分片已上传字节数
+                  const totalUploaded = uploadedSize + chunkUploaded // 总已上传字节数
+                  let percent = Math.min(
+                    100,
+                    Math.round((totalUploaded / fileSize) * 100)
+                  )
+                  if (percent > lastPercent) {
+                    setUploadProgress((prev) => ({
+                      ...prev,
+                      [filename]: percent,
+                    }))
+                    lastPercent = percent
+                  }
+                },
+              }
+            )
+            .then(() => {
+              // 单个分片上传成功，累计已上传大小
+              uploadedSize += chunk.file.size
+              inProgress-- // 并发数-1
+              finished++ // 完成数+1
+              next() // 继续上传下一个分片
+            })
+            .catch(reject) // 上传失败直接 reject
+        }
+      }
+      next() // 启动并发上传
+    })
   }
 
   // 合并切片
@@ -88,8 +162,7 @@ const App = () => {
   const uploadFile = async (file) => {
     try {
       // 检查文件类型
-      const allowedTypes = ["image/jpeg", "image/png", "image/gif", "video/mp4"]
-      if (!allowedTypes.includes(file.type)) {
+      if (!ALLOWED_TYPES.includes(file.type)) {
         message.error(
           `不支持的文件格式：${file.type}，只支持上传 JPG、PNG、GIF 图片和 MP4 视频文件！`
         )
@@ -105,19 +178,24 @@ const App = () => {
       } = await axios.get(
         `http://localhost:3000/check?fileHash=${fileHash}&filename=${file.name}`
       )
-
       if (uploaded) {
         message.success(`${file.name} 已存在，秒传成功！`)
         return true
       }
 
-      // 切片并上传
+      // 获取已上传分片索引
+      const uploadedIndexes = await getUploadedChunks(fileHash, file.name)
+      // 切片并上传（断点续传）
       const chunks = createFileChunks(file)
-      await uploadChunks(chunks, fileHash, file.name)
-
+      await uploadChunks(
+        chunks,
+        fileHash,
+        file.name,
+        uploadedIndexes,
+        file.size
+      )
       // 合并切片
       await mergeChunks(fileHash, file.name, file.size)
-
       message.success(`${file.name} 上传成功！`)
       return true
     } catch (error) {
@@ -143,6 +221,7 @@ const App = () => {
             type: file.type,
             size: file.size,
             status: "success",
+            file: file,
           },
         ])
       } else {
@@ -154,6 +233,7 @@ const App = () => {
             type: file.type,
             size: file.size,
             status: "error",
+            file: file,
           },
         ])
       }
@@ -176,13 +256,25 @@ const App = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
   }
 
+  // 重新上传处理函数
+  const handleRetry = (file) => {
+    setCompletedFiles((prev) => prev.filter((f) => f.name !== file.name))
+    // 取原始 File 对象
+    const rawFile = file.file || file
+    customRequest({
+      file: rawFile,
+      onSuccess: () => {},
+      onError: () => {},
+    })
+  }
+
   return (
     <div className="upload-container">
       <Upload
         customRequest={customRequest}
         showUploadList={false}
         disabled={uploading}
-        accept="image/jpeg,image/png,image/gif,video/mp4"
+        accept="image/jpeg,image/png,image/gif,video/mp4,video/quicktime"
         multiple
       >
         <Button icon={<UploadOutlined />} disabled={uploading}>
@@ -235,9 +327,19 @@ const App = () => {
                             上传成功
                           </Tag>
                         ) : (
-                          <Tag icon={<CloseCircleOutlined />} color="error">
-                            上传失败
-                          </Tag>
+                          <>
+                            <Tag icon={<CloseCircleOutlined />} color="error">
+                              上传失败
+                            </Tag>
+                            <Button
+                              size="small"
+                              type="link"
+                              onClick={() => handleRetry(file)}
+                              style={{ marginLeft: 8 }}
+                            >
+                              重新上传
+                            </Button>
+                          </>
                         )}
                       </div>
                     </div>

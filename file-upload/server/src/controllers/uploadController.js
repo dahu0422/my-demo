@@ -8,7 +8,8 @@ const MIME_TYPES = {
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
   '.gif': 'image/gif',
-  '.mp4': 'video/mp4'
+  '.mp4': 'video/mp4',
+  '.mov': 'video/quicktime'
 };
 
 class UploadController {
@@ -135,6 +136,19 @@ class UploadController {
       ctx.status = 500;
       ctx.body = { success: false, message: '文件合并失败' };
     }
+  }
+
+  // 检查已上传分片（断点续传）
+  async uploadedChunks(ctx) {
+    const { fileHash, filename } = ctx.query;
+    const chunkDir = path.join(config.upload.dir, 'chunks', fileHash);
+    let uploaded = [];
+    if (fs.existsSync(chunkDir)) {
+      uploaded = fs.readdirSync(chunkDir)
+        .map(name => Number(name))
+        .filter(n => !isNaN(n));
+    }
+    ctx.body = { uploaded };
   }
 }
 
