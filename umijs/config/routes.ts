@@ -19,5 +19,13 @@ export default [
     locale: 'menu.access',
     path: '/access',
     component: './Access',
+    access: 'access',
+  },
+  {
+    name: '记录中心',
+    locale: 'menu.recordCenter',
+    path: '/recordCenter',
+    component: './RecordCenter',
+    access: 'recordCenter',
   },
 ];

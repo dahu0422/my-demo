@@ -1,5 +1,5 @@
 // 运行时配置
-import { history, RunTimeLayoutConfig } from '@umijs/max';
+import { RunTimeLayoutConfig } from '@umijs/max';
 
 const loginPath = '/login';
 
@@ -7,15 +7,11 @@ const loginPath = '/login';
 // 更多信息见文档：https://umijs.org/docs/api/runtime-config#getinitialstate
 export async function getInitialState(): Promise<{
   currentUser?: Object;
+  isAdmin?: boolean;
 }> {
-  // 登录鉴权，跳转非登录页时查询用户信息
-  const { location } = history;
-  if (location.pathname !== loginPath) {
-    console.log('location.pathname', location.pathname);
-    // TODO:查询用户信息
-    return { currentUser: {} };
-  }
-  return {};
+  return {
+    currentUser: { permissions: ['access'], isAdmin: true },
+  };
 }
 
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
@@ -41,8 +37,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
      */
     onPageChange: () => {
       console.log('onPageChange', !initialState?.currentUser);
-      const { location } = history;
       // 如果没有登录，重定向到 login
+      // const { location } = history;
       // if (!initialState?.currentUser && location.pathname !== loginPath) {
       //   history.push(loginPath);
       // }
