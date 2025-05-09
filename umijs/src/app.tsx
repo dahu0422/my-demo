@@ -10,7 +10,10 @@ export async function getInitialState(): Promise<{
   isAdmin?: boolean;
 }> {
   return {
-    currentUser: { permissions: ['access'], isAdmin: true },
+    currentUser: {
+      permissions: ['access', 'internationalization'],
+      isAdmin: true,
+    },
   };
 }
 

@@ -22,10 +22,10 @@ export default [
     access: 'access',
   },
   {
-    name: '记录中心',
-    locale: 'menu.recordCenter',
-    path: '/recordCenter',
-    component: './RecordCenter',
-    access: 'recordCenter',
+    name: '国际化演示',
+    locale: 'menu.internationalization',
+    path: '/internationalization',
+    component: './Internationalization',
+    access: 'internationalization',
   },
 ];
