@@ -11,6 +11,7 @@ export default defineConfig({
   layout: {
     locale: true,
   },
+  plugins: [require.resolve('../src/plugins/create-page/plugin')],
   antd: {},
   access: {},
   model: {},
