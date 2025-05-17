@@ -34,6 +34,6 @@ export default defineConfig({
   qiankun: {
     slave: {},
   },
-  base: 'project',
-  publicPath: 'http://localhost:7001',
+  // base: '/project',
+  // publicPath: 'http://localhost:8001/',
 });

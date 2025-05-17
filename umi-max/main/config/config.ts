@@ -12,6 +12,11 @@ export default defineConfig({
     locale: true,
   },
   plugins: [require.resolve('../src/plugins/create-page/plugin')],
+  qiankun: {
+    master: {
+      apps: [{ name: 'app1', entry: '//localhost:8001' }],
+    },
+  },
   antd: {},
   access: {},
   model: {},

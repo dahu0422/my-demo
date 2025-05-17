@@ -12,17 +12,20 @@ export const layout = () => {
     menu: {
       locale: false,
     },
+    headerRender: false,
+    footerRender: false,
+    menuRender: false,
   };
 };
 
-export const qiankun = {
-  async bootstrap() {
-    console.log('subapp bootstraped');
-  },
-  async mount(props: any) {
-    console.log('subapp mount', props);
-  },
-  async unmount() {
-    console.log('subapp unmount');
-  },
-};
+// export const qiankun = {
+//   async bootstrap() {
+//     console.log('subapp bootstraped');
+//   },
+//   async mount(props: any) {
+//     console.log('subapp mount', props);
+//   },
+//   async unmount() {
+//     console.log('subapp unmount');
+//   },
+// };
