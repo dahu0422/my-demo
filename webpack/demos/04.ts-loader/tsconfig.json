@@ -1,0 +1,7 @@
+{
+  // 编译选项
+  "compilerOptions": {
+    "noImplicitAny": true, // 禁止隐式 any 类型
+    "moduleResolution": "node" // 使用 Node 模块解析策略
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "04.ts-loader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:dev": "NODE_ENV=development webpack --config webpack.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.6.4"
+}
