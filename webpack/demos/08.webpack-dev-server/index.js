@@ -1,1 +1,0 @@
-const str = 'hello webpack-dev-server';
