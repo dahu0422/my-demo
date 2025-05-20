@@ -14,7 +14,7 @@ export default defineConfig({
   plugins: [require.resolve('../src/plugins/create-page/plugin')],
   qiankun: {
     master: {
-      apps: [{ name: 'app1', entry: '//localhost:8001' }],
+      apps: [{ name: 'app1', entry: '//localhost:7001' }],
     },
   },
   antd: {},
