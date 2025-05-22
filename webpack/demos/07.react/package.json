@@ -1,0 +1,23 @@
+{
+  "name": "07.react",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:dev": "NODE_ENV=development webpack --config webpack.config.js",
+    "dev": "webpack serve --config webpack.config.js --mode development"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.6.4",
+  "devDependencies": {
+    "@babel/preset-react": "^7.27.1",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
+}
