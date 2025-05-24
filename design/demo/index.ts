@@ -1,4 +1,3 @@
-import render from "../src/render";
+import { render } from "../src/main"
 
-render("#root", {}, {});
-
+render("#root", {}, {})

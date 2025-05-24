@@ -1,7 +1,7 @@
 // 组件注册
-import React, { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
+import React, { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+import App from "./App"
 
 /**
  * 渲染函数
@@ -19,20 +19,23 @@ const render = (
   const root =
     typeof container === "string"
       ? document.querySelector(container)
-      : container;
+      : container
 
   // 如果容器元素不存在，则抛出错误
   if (!root) {
-    throw new Error("容器元素不存在");
+    throw new Error("容器元素不存在")
   }
+
   // 创建 React 根元素
-  const reactRoot = createRoot(root);
+  const reactRoot = createRoot(root)
 
   reactRoot.render(
-    React.createElement(StrictMode, null,
+    React.createElement(
+      StrictMode,
+      null,
       React.createElement(App, { initStore: initStore, options: options })
     )
-  );
-};
+  )
+}
 
-export default render;
+export default render
