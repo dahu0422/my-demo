@@ -32,20 +32,20 @@
 */
 
 const data = [
-  {id: 0, name: '中国'},
-  {id: 1, pid: 0, name: '广州'},
-  {id: 2, pid: 0, name: '深圳'},
-  {id: 3, pid: 1, name: '天河区'},
+  { id: 0, name: '中国' },
+  { id: 1, pid: 0, name: '广州' },
+  { id: 2, pid: 0, name: '深圳' },
+  { id: 3, pid: 1, name: '天河区' },
 ]
 
 // 使用 Map 映射，单次遍历构建树
 // 时间复杂度O(n) 推荐 ❗❗❗
 function arrayToTree(data) {
   const idMap = new Map();
-  const tree = [];
+  const tree = {};
 
   data.forEach(item => {
-    idMap.set(item.id, {...item, children: []});
+    idMap.set(item.id, { ...item, children: [] });
   });
 
   data.forEach(item => {
@@ -56,7 +56,7 @@ function arrayToTree(data) {
         parent.children.push(node);
       }
     } else {
-      tree.push(node);
+      tree = node;
     }
   });
 

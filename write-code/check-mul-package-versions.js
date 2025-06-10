@@ -45,7 +45,7 @@ var packageTree = {
 function checkMulPackageVersions(packageTree) {
   const versionMap = new Map();
 
-  // 递归便利包树，手机所有包及其版本
+  // 递归便利包树，收集所有包及其版本
   function traverse(node) {
     if (!node) return;
 
