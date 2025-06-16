@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual List</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #container {
+      width: 400px;
+      height: 400px;
+      overflow: auto;
+      position: relative;
+      border: 1px solid #000;
+    }
+
+    #phantom {
+      position: absolute;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="phantom"></div>
+    <div id="list"></div>
+  </div>
+</body>
+
+<script>
+  const itemHeight = 40 // 每项高度
+  const total = 1000 // 总条数
+  const visibleCount = Math.ceil(400 / itemHeight) // 可视区域容纳的条数
+  const buffer = 5 // 缓冲区, 防止滚动太快白屏
+
+  const container = document.getElementById('container')
+  const list = document.getElementById('list')
+  const phantom = document.getElementById('phantom')
+
+  // 计算总高度
+  phantom.style.height = total * itemHeight + 'px'
+
+  function render() {
+    const scrollTop = container.scrollTop
+    const start = Math.max(0, Math.floor(scrollTop / itemHeight) - buffer) // 起始索引
+    const end = Math.min(total, Math.floor(scrollTop / itemHeight) + visibleCount + buffer) // 结束索引
+
+    // 生成可见项
+    let html = '';
+    for (let i = start; i < end; i++) {
+      html += `<div style="height:${itemHeight}px;line-height:${itemHeight}px;">Item ${i}</div>`;
+    }
+    list.innerHTML = html
+    list.style.transform = `translateY(${start * itemHeight}px)`
+  }
+
+  // 初始化
+  render()
+
+  // 监听滚动事件
+  container.addEventListener('scroll', render)
+
+</script>
+
+</html>
