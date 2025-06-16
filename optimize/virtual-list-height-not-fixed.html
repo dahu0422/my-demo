@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>virtual list height not fixed</title>
+  <style>
+    #container {
+      height: 400px;
+      width: 320px;
+      border: 1px solid #ccc;
+      overflow: auto;
+      position: relative;
+    }
+
+    #phantom {
+      width: 100%;
+      opacity: 0;
+    }
+
+    #list {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      will-change: transform;
+    }
+
+    .item {
+      box-sizing: border-box;
+      border-bottom: 1px solid #eee;
+      padding: 8px;
+      background: #fff;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="phantom"></div>
+    <div id="list"></div>
+  </div>
+</body>
+
+<script>
+  const total = 1000;
+  const buffer = 5;
+  const containerHeight = 400;
+
+  // 生成模拟数据（内容行数随机，导致高度不等）
+  const data = Array.from({ length: total }, (_, i) => {
+    const lines = Math.floor(Math.random() * 8) + 1;
+    return `消息 ${i}<br>${'内容内容内容 '.repeat(lines)}`;
+  });
+
+  // DOM
+  const container = document.getElementById('container');
+  const phantom = document.getElementById('phantom');
+  const list = document.getElementById('list');
+
+  // 记录每项高度和累积偏移量
+  let heights = new Array(total).fill(40); // 初始估算高度
+  let offsets = new Array(total + 1).fill(0);
+
+  // 计算 offsets：从 0 到 total 的累加高度
+  function updateOffsets() {
+    offsets[0] = 0;
+    for (let i = 1; i <= total; i++) {
+      offsets[i] = offsets[i - 1] + heights[i - 1];
+    }
+  }
+
+  // 二分查找第一个可见项：在当前滚动位置 scrollTop 下，第一个“出现在可视区”的列表项索引
+  function findStartIndex(scrollTop) {
+    let left = 0, right = total;
+    while (left < right) {
+      let mid = (left + right) >> 1;
+      if (offsets[mid] < scrollTop) left = mid + 1;
+      else right = mid;
+    }
+    return Math.max(0, left - buffer);
+  }
+
+  // 核心逻辑：
+  // 1. 计算可视区能显示多少项
+  // 2. 累加高度小于可视区高度 + 缓冲区则继续累加，end 不断后移
+  // 3. 渲染
+  // 4. 渲染后测量实际高度
+  // 5. 重新渲染，防止高度变化导致错位
+  function render() {
+    // 计算可视区能显示多少项
+    const scrollTop = container.scrollTop;
+    const start = findStartIndex(scrollTop); // 开始索引
+    let end = start; // 结束索引
+    let acc = offsets[start]; // 累加高度
+
+    // 累加高度小于可视区高度 + 缓冲区则继续累加，end 不断后移
+    while (end < total && acc < scrollTop + containerHeight + buffer * 100) {
+      acc += heights[end];
+      end++;
+    }
+
+    // 渲染
+    let html = '';
+    for (let i = start; i < end; i++) {
+      html += `<div class="item" data-index="${i}">${data[i]}</div>`;
+    }
+    list.innerHTML = html;
+    list.style.transform = `translateY(${offsets[start]}px)`;
+    phantom.style.height = `${offsets[total]}px`;
+
+    // 渲染后测量实际高度
+    requestAnimationFrame(() => {
+      const children = list.children;
+      let changed = false;
+      for (let i = 0; i < children.length; i++) {
+        const idx = start + i;
+        const h = children[i].offsetHeight;
+        if (heights[idx] !== h) {
+          heights[idx] = h;
+          changed = true;
+        }
+      }
+      if (changed) {
+        updateOffsets();
+        // 重新渲染，防止高度变化导致错位
+        render();
+      }
+    });
+  }
+
+  // 事件绑定
+  container.addEventListener('scroll', render);
+
+  // 初始化
+  updateOffsets();
+  render();
+</script>
+
+</html>
