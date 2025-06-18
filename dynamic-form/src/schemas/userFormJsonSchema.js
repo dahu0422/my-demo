@@ -34,6 +34,18 @@ const userFormJsonSchema = {
         max: 120
       }
     },
+    emails: {
+      type: "array",
+      title: "邮箱列表",
+      widget: "arrayInput", // 自定义，前端实现为可增减的输入框
+      items: {
+        type: "string",
+        widget: "input",
+        props: {
+          placeholder: "请输入邮箱"
+        }
+      }
+    },
     country: {
       type: "string",
       title: "国家",
