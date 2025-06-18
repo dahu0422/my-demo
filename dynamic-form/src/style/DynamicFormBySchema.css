@@ -12,6 +12,12 @@
   margin-bottom: 24px;
 }
 
+.dfb-schema-form-item-selected {
+  border: 1.5px solid #1677ff;
+  border-radius: 6px;
+  padding: 8px;
+}
+
 .dfb-schema-field {
   width: 100%;
 }

@@ -13,6 +13,8 @@
  * required:     必填字段名数组，指定哪些字段必须填写
  */
 
+// TODO: 实现表单项联动效果，如何设置 schema 的依赖关系。
+
 const userFormJsonSchema = {
   title: "用户信息",
   type: "object",
@@ -22,7 +24,9 @@ const userFormJsonSchema = {
       title: "用户名",
       widget: "input",
       props: {
-        placeholder: "请输入用户名"
+        placeholder: "请输入用户名",
+        disabled: false,
+        maxLength: 10,
       }
     },
     age: {

@@ -1,0 +1,14 @@
+/* src/style/SchemaEditor.css */
+.schema-editor {
+  width: 100%;
+}
+
+.schema-editor-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.schema-editor-error {
+  color: #ff4d4f;
+  margin-top: 8px;
+}

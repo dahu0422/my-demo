@@ -24,8 +24,12 @@ const widgetMap = {
   arrayInput: ArrayInput,
 }
 
-export default function DynamicFormBySchema({ schema }) {
-  const [form] = Form.useForm()
+export default function DynamicFormBySchema({
+  form,
+  schema,
+  selectedField,
+  setSelectedField,
+}) {
   const { properties = {}, required = [], title } = schema
 
   return (
@@ -99,15 +103,17 @@ export default function DynamicFormBySchema({ schema }) {
           }
 
           return (
-            <Form.Item
+            <div
               key={field}
-              label={title}
-              name={field}
-              rules={rules}
-              className="dfb-schema-form-item"
+              className={`dfb-schema-form-item ${
+                field === selectedField ? "dfb-schema-form-item-selected" : ""
+              }`}
+              onClick={() => setSelectedField(field)}
             >
-              {content}
-            </Form.Item>
+              <Form.Item label={title} name={field} rules={rules}>
+                {content}
+              </Form.Item>
+            </div>
           )
         })}
         <Form.Item className="dfb-schema-form-btn">
