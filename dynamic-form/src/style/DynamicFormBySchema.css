@@ -1,0 +1,31 @@
+.dfb-schema-container {
+  width: 420px;
+  margin: 48px auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.dfb-schema-title {
+  text-align: center;
+  margin-bottom: 32px !important;
+  font-weight: bold;
+}
+
+.dfb-schema-form {
+  width: 100%;
+}
+
+.dfb-schema-form-item {
+  margin-bottom: 24px;
+}
+
+.dfb-schema-field {
+  width: 100%;
+}
+
+.dfb-schema-form-btn {
+  text-align: center;
+  margin-bottom: 0;
+}
