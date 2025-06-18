@@ -26,7 +26,7 @@ export default function DynamicFormBySchema({ schema }) {
   const { properties = {}, required = [], title } = schema
 
   return (
-    <div className="dfb-schema-container">
+    <>
       {title && (
         <Title level={3} className="dfb-schema-title">
           {title}
@@ -111,6 +111,6 @@ export default function DynamicFormBySchema({ schema }) {
           </Button>
         </Form.Item>
       </Form>
-    </div>
+    </>
   )
 }
