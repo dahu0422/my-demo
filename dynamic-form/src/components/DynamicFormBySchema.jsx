@@ -9,6 +9,8 @@ import {
   Button,
   Typography,
 } from "antd"
+import ArrayInput from "./ArrayInput"
+
 import "../style/DynamicFormBySchema.css" // 引入样式文件
 
 const { Title } = Typography
@@ -19,6 +21,7 @@ const widgetMap = {
   select: Select,
   radio: Radio.Group,
   checkbox: Checkbox.Group,
+  arrayInput: ArrayInput,
 }
 
 export default function DynamicFormBySchema({ schema }) {
@@ -89,6 +92,8 @@ export default function DynamicFormBySchema({ schema }) {
                 className="dfb-schema-field"
               />
             )
+          } else if (widget === "arrayInput" && Comp) {
+            content = <Comp name={field} {...compProps} />
           } else {
             content = <Comp {...compProps} className="dfb-schema-field" />
           }
