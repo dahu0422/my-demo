@@ -1,4 +1,4 @@
-// 类型
+// # 类型
 type A = string
 
 // 声明一组联合类型：
@@ -31,7 +31,7 @@ function process(input: MaybeNull<{ handler: () => {} }>) {
   input?.handler()
 }
 
-// ------------- 交叉类型 -------------
+// ## 交叉类型
 // 交叉类型：需要同时满足 A 与 B 两个类型，符号为 `&`
 interface NameStruct {
   name: string
@@ -70,8 +70,8 @@ type Composed = Struct1 & Struct2
 type PrimitivePropType = Composed["primitiveProp"] // never
 type ObjectPropType = Composed["objectProp"] // { name: string; age: number; }
 
-// ------------- 索引类型 -------------
-// ------------- 索引签名类型 -------------
+// ## 索引类型
+// ### 索引签名类型
 
 type AllStringTypes = {
   [key: string]: string
@@ -87,7 +87,7 @@ type StringOrBooleanTypes = {
   [key: string]: number | boolean
 }
 
-// ------------- 索引类型访问 -------------
+// ### 索引类型访问
 // 使用 string 类型来访问 NumberRecord
 interface NumberRecord {
   [key: string]: number
