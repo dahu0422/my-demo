@@ -1,37 +1,29 @@
-// # 类型
+// # 类型别名
+// type 是 TypeScript 中用于创建类型别名的关键字，它允许为现有的类型创建一个新的名称。
+// 类型别名不会创建新的类型，只是给现有类型起一个更易读的名字。
+
+// 基本类型别名
 type A = string
 
-// 声明一组联合类型：
+// 联合类型
 type StatusCode = 200 | 301 | 400 | 500 | 502
 type PossibleDataTypes = string | number | (() => unknown)
 
-const status: StatusCode = 502
-
-// 抽离一个函数类型
+// 函数类型
 type Handler = (e: Event) => void
-
 const clickHandler: Handler = (e) => {}
-const moveHandler: Handler = (e) => {}
-const dragHandler: Handler = (e) => {}
 
-// 声明一个对象类型
+// 对象类型
 type ObjType = {
   name: string
   age: number
 }
 
-// 类型别名还能作为工具类型，工具类型同样基于类型别名，只是多了泛型
+// 泛型类型别名
 type Factory<T> = T | number | string
 type FactoryWIthBool = Factory<boolean>
-const foo: FactoryWIthBool = true
-
-// 声明一个简单、有实际意义的工具类型
 type MaybeNull<T> = T | null
-function process(input: MaybeNull<{ handler: () => {} }>) {
-  input?.handler()
-}
 
-// ## 交叉类型
 // 交叉类型：需要同时满足 A 与 B 两个类型，符号为 `&`
 interface NameStruct {
   name: string
@@ -42,6 +34,7 @@ interface AgeStruct {
 }
 
 type ProfileStruct = NameStruct & AgeStruct
+
 const profile: ProfileStruct = {
   name: "linbudu",
   age: 18,
