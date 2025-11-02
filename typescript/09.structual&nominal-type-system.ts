@@ -2,7 +2,7 @@
 
 // 如果两个类型具有相同的结构（属性和方法），即使名称不同，它们也被视为兼容。
 
-// 示例1
+// ## 示例1
 // class Cat {
 //   eat() {}
 // }
@@ -14,7 +14,7 @@
 // function feedCat(cat: Cat) {}
 // feedCat(new Dog())
 
-// 示例2
+// ## 示例2
 // class Cat {
 //   eat() {}
 //   meow() {}
@@ -28,7 +28,7 @@
 // 报错：Dog 类型不具备 Cat 类型中的 meow 方法，不认为是相同类型
 // feedCat(new Dog())
 
-// 示例 3
+// ## 示例 3
 // class Cat {
 //   eat() {}
 // }
