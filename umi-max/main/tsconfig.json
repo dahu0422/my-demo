@@ -1,4 +1,0 @@
-{
-  "extends": "./src/.umi/tsconfig.json",
-  "exclude": ["src/template"]
-}
